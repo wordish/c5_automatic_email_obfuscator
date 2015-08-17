@@ -1,0 +1,6 @@
+1.2.3 - Fixed mailto-links when title, body, cc or bcc are defined (HTML obfuscation method)
+1.2.2 - Modified how custom email obfuscation methods are defined. Added Vigrene cipher obfuscation method thanks to mnakalay
+1.2.1 - Added jQuery wrapper for the js files for better compatibility when $ does not stand for jQuery.
+1.2 - Reverted back to the old output events because on_page_output is not working in all cases. Improved writing own obfuscation classes. Added new obfusacation method.
+1.1 - Changed the output event, fixed a bug in link class adding when it did not have any class originally
+1.0 - Initial Release
