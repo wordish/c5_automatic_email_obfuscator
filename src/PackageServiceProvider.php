@@ -11,15 +11,17 @@ class PackageServiceProvider extends Provider
 
     public function register()
     {
-        $this->app->singleton('automatic_email_obfuscator/obfuscator', function () {
-            $method = Config::get('app.obfuscator.method', 'html');
-            $name = Core::make('helper/text')->camelcase($method);
-            $obfuscatorClass = '\Concrete\Package\AutomaticEmailObfuscator\Src\EmailObfuscator\\' . $name . 'Obfuscator';
-            if (!class_exists($obfuscatorClass)) {
-                throw new \Exception(t("Invalid email obfuscation method defined: %s", $method));
-            }
-            return new $obfuscatorClass;
-        });
+        if (!$this->app->bound('automatic_email_obfuscator/obfuscator')) {
+            $this->app->singleton('automatic_email_obfuscator/obfuscator', function () {
+                $method = Config::get('app.obfuscator.method', 'html');
+                $name = Core::make('helper/text')->camelcase($method);
+                $obfuscatorClass = '\Concrete\Package\AutomaticEmailObfuscator\Src\EmailObfuscator\\' . $name . 'Obfuscator';
+                if (!class_exists($obfuscatorClass)) {
+                    throw new \Exception(t("Invalid email obfuscation method defined: %s", $method));
+                }
+                return new $obfuscatorClass;
+            });
+        }
     }
 
     public function registerEvents()
