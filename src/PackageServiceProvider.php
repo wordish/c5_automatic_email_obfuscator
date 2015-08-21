@@ -8,6 +8,7 @@ use Concrete\Core\Foundation\Service\Provider;
 
 class PackageServiceProvider extends Provider
 {
+
     public function register()
     {
         $this->app->singleton('automatic_email_obfuscator/obfuscator', function () {
@@ -28,7 +29,7 @@ class PackageServiceProvider extends Provider
         Events::addListener('on_page_output', function ($event) use ($helper) {
             $helper->handle($event);
         });
-        Events::addListener('on_page_view', function ($event) {
+        Events::addListener('on_before_dispatch', function ($event) {
             Core::make('automatic_email_obfuscator/obfuscator')->registerViewAssets();
         });
     }
