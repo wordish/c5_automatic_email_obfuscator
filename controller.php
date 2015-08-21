@@ -9,8 +9,9 @@ use Concrete\Package\AutomaticEmailObfuscator\Src\PackageServiceProvider;
 
 class Controller extends Package
 {
+
     protected $pkgHandle = 'automatic_email_obfuscator';
-    protected $appVersionRequired = '5.7.0';
+    protected $appVersionRequired = '5.7.3.1';
     protected $pkgVersion = '2.0b1';
 
     public function getPackageDescription()
@@ -34,6 +35,6 @@ class Controller extends Package
         $sp = new PackageServiceProvider($app);
         $sp->register();
         $sp->registerEvents();
-        $sp->registerAssets();
     }
+
 }

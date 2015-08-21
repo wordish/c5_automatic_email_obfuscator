@@ -7,6 +7,7 @@ use Symfony\Component\EventDispatcher\Event;
 
 class EmailObfuscationHelper
 {
+
     public function registerViewAssets()
     {
         Core::make('automatic_email_obfuscator/obfuscator')->registerViewAssets();
@@ -35,27 +36,34 @@ class EmailObfuscationHelper
     {
         // Regexps modified from the MIT licenced "Transparent Email Obfuscation" add-on:
         // http://www.concrete5.org/marketplace/addons/transparent-email-obfuscation/
+        $helper = $this;
+
         $content = preg_replace_callback('/(<a[^>]*)(href=")(mailto:)([^"]+)([^>]*>)/',
-            function ($matches) {
-                return EmailObfuscationHelper::mailtoCallback($matches);
+            function ($matches) use ($helper) {
+                return $helper->obfuscateMailto($matches);
             },
-            $content);
+            $content
+        );
 
         $content = preg_replace_callback('/\b[A-Z0-9._%-]+@[A-Z0-9.-]+\.[A-Z]+\b(?!([^<]+)?>)/i',
-            function ($matches) {
-                return EmailObfuscationHelper::mailCallback($matches);
+            function ($matches) use ($helper) {
+                return $helper->obfuscateMail($matches);
             },
-            $content);
+            $content
+        );
 
         return $content;
     }
 
-    public static function mailtoCallback($matches)
+    public function obfuscateMailto($matches)
     {
-        $cb = Core::make('automatic_email_obfuscator/obfuscator')->getCallback('mailto');
-        if (method_exists(Core::make('automatic_email_obfuscator/obfuscator'), $cb)) {
-            $parts = array($matches[1], $matches[2], $matches[3], $matches[4], $matches[5]);
-            $linkCls = "obfuscated_link";
+        $parts = array($matches[1], $matches[2], $matches[3], $matches[4], $matches[5]);
+        $obfuscator = Core::make('automatic_email_obfuscator/obfuscator');
+        
+        $text = $parts[2] . $parts[3];
+        $obfuscated = $obfuscator->obfuscateMailtoLinkHref($text);
+        if ($text != $obfuscated) {
+            $linkCls = "obfuscated-link";
             $hasClass = false;
             if (strpos($parts[0], "class=\"") !== false) {
                 $parts[0] = str_replace("class=\"", "class=\"" . $linkCls . " ", $parts[0]);
@@ -68,23 +76,21 @@ class EmailObfuscationHelper
             if (!$hasClass) {
                 $parts[0] = $parts[0] . 'class="' . $linkCls . '" ';
             }
-            return $parts[0] . $parts[1] . call_user_func(array(
-                Core::make('automatic_email_obfuscator/obfuscator'),
-                $cb
-            ),
-                $parts[2] . $parts[3]) . $parts[4];
+            return $parts[0] . $parts[1] . $obfuscated . $parts[4];
         }
+        return $matches[0];
     }
 
-    public static function mailCallback($matches)
+    public function obfuscateMail($matches)
     {
-        $cb = Core::make('automatic_email_obfuscator/obfuscator')->getCallback('email');
-        if (method_exists(Core::make('automatic_email_obfuscator/obfuscator'), $cb)) {
-            return '<span class="obfuscated_link_text">' . call_user_func(array(
-                Core::make('automatic_email_obfuscator/obfuscator'),
-                $cb
-            ),
-                $matches[0]) . '</span>';
+        $obfuscator = Core::make('automatic_email_obfuscator/obfuscator');
+
+        $text = $matches[0];
+        $obfuscated = $obfuscator->obfuscateMail($text);
+        if ($text != $obfuscated) {
+            return '<span class="obfuscated-link-text">' . $obfuscated . '</span>';
         }
+        return $matches[0];
     }
+
 }

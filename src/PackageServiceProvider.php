@@ -11,22 +11,26 @@ class PackageServiceProvider extends Provider
     public function register()
     {
         $this->app->singleton('automatic_email_obfuscator/obfuscator', function () {
-            $method = Core::make('helper/text')->camelcase(Config::get('app.obfuscator.method', 'html'));
-            $obfuscatorClass = '\Concrete\Package\AutomaticEmailObfuscator\Src\Obfuscator\EmailObfuscator' . $method;
+            $method = Config::get('app.obfuscator.method', 'html');
+            $name = Core::make('helper/text')->camelcase($method);
+            $obfuscatorClass = '\Concrete\Package\AutomaticEmailObfuscator\Src\EmailObfuscator\\' . $name . 'Obfuscator';
+            if (!class_exists($obfuscatorClass)) {
+                throw new \Exception(t("Invalid email obfuscation method defined: %s", $method));
+            }
             return new $obfuscatorClass;
         });
     }
 
     public function registerEvents()
     {
-        Events::addListener('on_page_output', function ($event) {
-            $helper = new EmailObfuscationHelper();
+        $helper = new EmailObfuscationHelper();
+
+        Events::addListener('on_page_output', function ($event) use ($helper) {
             $helper->handle($event);
+        });
+        Events::addListener('on_page_view', function ($event) {
+            Core::make('automatic_email_obfuscator/obfuscator')->registerViewAssets();
         });
     }
 
-    public function registerAssets()
-    {
-        Core::make('automatic_email_obfuscator/obfuscator')->registerViewAssets();
-    }
 }

@@ -1,12 +1,13 @@
 <?php
-namespace Concrete\Package\AutomaticEmailObfuscator\Src\Obfuscator;
+namespace Concrete\Package\AutomaticEmailObfuscator\Src\EmailObfuscator;
 
 use Core;
 use Concrete\Core\Asset\AssetList;
 use Concrete\Core\Http\ResponseAssetGroup;
 
-class EmailObfuscatorRtl extends EmailObfuscatorDefault
+class RtlObfuscator extends AbstractObfuscator
 {
+
     public function registerViewAssets()
     {
         $al = AssetList::getInstance();
@@ -31,4 +32,5 @@ class EmailObfuscatorRtl extends EmailObfuscatorDefault
     {
         return "#MAIL:" . strrev(str_replace("mailto:", "", $href));
     }
+
 }

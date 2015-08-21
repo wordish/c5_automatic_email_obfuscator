@@ -1,23 +1,24 @@
 <?php
-namespace Concrete\Package\AutomaticEmailObfuscator\Src\Obfuscator;
+namespace Concrete\Package\AutomaticEmailObfuscator\Src\EmailObfuscator;
 
 use Core;
 use Concrete\Core\Asset\AssetList;
 use Concrete\Core\Http\ResponseAssetGroup;
 
-/*
+/**
  * Vigenere Cipher for Automatic Email Obfuscator
  * Ciphering Library
  *
- * Copyright 2011, Nour Akalay
- * Free to use and abuse under the MIT license.
- * http://www.opensource.org/licenses/mit-license.php
- *
- * December 2011
+ * By Nour Akalay, December 2011
+ * 
+ * @author Nour Akalay
+ * @copyright Copyright (c) 2011, Nour Akalay
+ * @license Free to use and abuse under the MIT license.
+ *          http://www.opensource.org/licenses/mit-license.php
  */
-
-class EmailObfuscatorVigenere extends EmailObfuscatorDefault
+class VigenereObfuscator extends AbstractObfuscator
 {
+
     public function registerViewAssets()
     {
         $al = AssetList::getInstance();
@@ -63,21 +64,22 @@ class EmailObfuscatorVigenere extends EmailObfuscatorDefault
                 $j = -1;
             }
         }
-        //I concatenate the key and the encrypted email and separate them with ]#[
-        //I assume chances for this string to ever appear in a cryoted email are pretty slim
+        // I concatenate the key and the encrypted email and separate them with ]#[
+        // I assume chances for this string to ever appear in a cryoted email are pretty slim
         return $key . "]#[" . $ciphered_email;
     }
 
     public function obfuscateMailtoLinkHref($href)
     {
         $href = $this->obfuscateMail(str_replace("mailto:", "", $href));
-        //I replaced the original #MAIL: for paranoiac reasons
-        //I believe robots scavenging for emails are designed to go around attempts
-        //to obfuscate email addresses. I Also believe they're getting more and more efficient.
-        //It seems logical to think that they probably look for strings like "mail"
-        //and probably ":" so I just make sure nothing at all even suggests the presence of
-        //an email address by using "#Keep#Looking#" (Sadic Humour) and no ":" instead of "#MAIL:".
-        //As I said, pure paranoia.
-        return "#KEEP#LOOKING#" . $href;
+        // I replaced the original #MAIL: for paranoiac reasons
+        // I believe robots scavenging for emails are designed to go around attempts
+        // to obfuscate email addresses. I Also believe they're getting more and more efficient.
+        // It seems logical to think that they probably look for strings like "mail"
+        // and probably ":" so I just make sure nothing at all even suggests the presence of
+        // an email address by using "#KEEP-LOOKING-" (Sadic Humour) and no ":" instead of "#MAIL:".
+        // As I said, pure paranoia.
+        return "#KEEP-LOOKING-" . $href;
     }
+
 }
