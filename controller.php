@@ -14,14 +14,14 @@ class Controller extends Package
     protected $appVersionRequired = '5.7.3.1';
     protected $pkgVersion = '2.0rc1';
 
-    public function getPackageDescription()
-    {
-        return t("Automatically obfuscates all the e-mail addresses on your site to a form that most spambots cannot read.");
-    }
-
     public function getPackageName()
     {
         return t("Automatic Email Obfuscator");
+    }
+
+    public function getPackageDescription()
+    {
+        return t("Automatically obfuscates all the e-mail addresses on your site to a form that most spambots cannot read.");
     }
 
     public function install()
