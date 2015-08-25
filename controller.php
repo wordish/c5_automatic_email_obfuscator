@@ -12,7 +12,7 @@ class Controller extends Package
 
     protected $pkgHandle = 'automatic_email_obfuscator';
     protected $appVersionRequired = '5.7.3.1';
-    protected $pkgVersion = '2.0rc1';
+    protected $pkgVersion = '2.0';
 
     public function getPackageName()
     {
