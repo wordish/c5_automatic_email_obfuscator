@@ -3,8 +3,9 @@ namespace Concrete\Package\AutomaticEmailObfuscator\Src;
 
 use Core;
 use Config;
-use Concrete\Core\Support\Facade\Events;
 use Concrete\Core\Foundation\Service\Provider;
+use Concrete\Core\Page\View\PageView;
+use Concrete\Core\Support\Facade\Events;
 
 class PackageServiceProvider extends Provider
 {
@@ -31,8 +32,13 @@ class PackageServiceProvider extends Provider
         Events::addListener('on_page_output', function ($event) use ($helper) {
             $helper->handle($event);
         });
-        Events::addListener('on_before_dispatch', function ($event) {
-            Core::make('automatic_email_obfuscator/obfuscator')->registerViewAssets();
+        Events::addListener('on_start', function ($event) {
+            if ($event->hasArgument('view')) {
+                $view = $event->getArgument('view');
+                if ($view instanceof PageView) {
+                    Core::make('automatic_email_obfuscator/obfuscator')->registerViewAssets();
+                }
+            }
         });
     }
 
