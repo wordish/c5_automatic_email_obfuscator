@@ -3,7 +3,7 @@ namespace Concrete\Package\AutomaticEmailObfuscator\Src;
 
 use Core;
 use Concrete\Core\Page\Page;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 class EmailObfuscationHelper
 {
@@ -20,7 +20,7 @@ class EmailObfuscationHelper
      * @param Event $event
      * @return Event
      */
-    public function handle(Event $event)
+    public function handle(GenericEvent $event)
     {
         $viewText = $event->getArgument('contents');
         $p = Page::getCurrentPage();
